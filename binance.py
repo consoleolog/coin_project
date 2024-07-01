@@ -6,20 +6,19 @@ import uuid
 import websocket  # websocket-client
 import pandas as pd
 from dotenv import load_dotenv
-import matplotlib.pyplot as plt
 
 load_dotenv()
 
 access_key = os.environ['ACCESS_KEY']
 secret_key = os.environ['SECRET_KEY']
 
-# eth = pd.read_csv('./eth.csv')
-#
-# eth['short'] = eth['close'].rolling(5).mean()
-# eth['middle'] = eth['close'].rolling(20).mean()
-# eth['long'] = eth['close'].rolling(40).mean()
-#
-# eth.to_csv('eth_ver3.csv')
+eth = pd.read_csv('./eth.csv')
+
+eth['short'] = eth['close'].rolling(5).mean()
+eth['middle'] = eth['close'].rolling(20).mean()
+eth['long'] = eth['close'].rolling(40).mean()
+
+eth.to_csv('eth_ver3.csv')
 
 ## 매도랑 매수를 0,1 로 나누면 되겠는디?
 ## 이걸 먼저 하자
