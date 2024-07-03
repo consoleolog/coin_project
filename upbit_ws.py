@@ -19,7 +19,7 @@ middle = []
 long = []
 value = []
 current_price = []
-ticker = "ETH"
+ticker = "BTC"
 
 last_processed_timestamp = None
 
@@ -63,7 +63,7 @@ def on_message(ws, message):
     if len(value) > 120:
 
         if len(current_price) > 0:
-            if value[-1] > current_price[-1]:
+            if value[-1] > current_price[-1]*0.99:
                 print(f"===== SELL : {value[-1]} =====")
                 now = get_balance(upbit, ticker)
                 try:
