@@ -19,6 +19,7 @@ middle = []
 long = []
 value = []
 current_price = []
+ticker = "ETH"
 
 last_processed_timestamp = None
 
@@ -37,7 +38,7 @@ def on_message(ws, message):
 
     last_processed_timestamp = current_timestamp
 
-    print(len(value))
+    print(f"===== count : {len(value)} =====")
 
     if len(value) >= 20:
         avg_short = sum(value[-20:]) / 20
@@ -50,90 +51,30 @@ def on_message(ws, message):
     if len(value) >= 120:
         avg_long = sum(value[-120:]) / 120
         long.append(avg_long)
+    # if len(value) >= 5:
+    #     avg_short = sum(value[-5:]) / 5
+    #     short.append(avg_short)
+    # if len(value) >= 10:
+    #     avg_middle = sum(value[-10:]) / 10
+    #     middle.append(avg_middle)
+    # if len(value) >= 15:
+    #     avg_long = sum(value[-15:]) / 15
+    #     long.append(avg_long)
+    if len(value) > 120:
 
-        #매수 신호
-        # 1. 이동 평균선이 어느정도의 시간 동안 하락한 뒤 횡보하거나 약간 상승 기조로 전환된 시기에
-        # 가격이 그 이동 평균선을 아래서 위로 뚜렷하게 교차했을때
-        # 2. 이동 평균선이 지속적으로 상승하는 시기에 가격이 이동 평균선을 왼쪽에서 오른쪽으로
-        # 교차했을 때
-        # 3. 가격이 상승 기조의 이동 평균선 보다 위에 있고, 그 후 이동 평균선을 향해 접근하지만
-        # 이동 평균선과 교차하지 않고 다시 상승하기 시작할때
-        # 4. 가격이 하락기조의 이동 평균선보다 아래에 있고, 이동 평균선으로부터 그게 괴리되었을때
-
-        #매도 신호
-        # 1. 이동 평균선이 어느정도의 기간 동안 상승한 뒤 횡보하거나 약간 하락 기조로 전환된
-        # 시기에 가격이 그 이동 평균선을 위에서 아래로 뚜렷하게 교차했을 때
-        # 2. 이동 평균선이 지속적으로 하락하는 시기에 가격이 이동 평균선을 왼쪽에서 오른쪽으로
-        # 교차했을때
-        # 3. 가격이 하락 기조의 이동 평균선보다 아래에 있고, 그 후 이동 평균선을 향해 접근 하지만
-        # 이동 평균선과 교차하지 않고 다시 하락하기 시작했을 때,
-        # 4. 가격이 상승 기조의 이동 평균선 보다 위에 있고, 이동 평균선으로 부터 크게
-        # 괴리되어 있을 때
-
-        # ===================================================================
-        # 전역 매수 시점
-        # if short[-1] > long[-1]:
-        #     print(f'===== BUY : {value[-1]} ======')
-        #     current_price.append(value[-1])
-        #     now = get_balance(upbit, 'BTC')
-        #     buy_result = buy(upbit, "KRW-BTC", now, 6000)
-        #     if buy_result == 'error_buy':
-        #         return
-        #     else:
-        #         print(buy_result)
-        # # ===================================================================
-        #
-        # #
-        # elif short[-1] == middle[-1]:
-        #     print("===== 단기랑 중기랑 교차함 =====")
-        #     a = inclination(short, 20, 2)
-        #     b = inclination(short, 20, 3)
-        #     c = inclination(short, 20, 1)
-        #
-        #     if a > b > c > 0 and a > c:
-        #         # 매수 시점
-        #         print(f'===== BUY : {value[-1]} ======')
-        #         current_price.append(value[-1])
-        #         now = get_balance(upbit, 'BTC')
-        #         buy_result = buy(upbit, "KRW-BTC", now, 6000)
-        #         if buy_result == 'error_buy':
-        #             return
-        #         else:
-        #             print(buy_result)
-        #
-        # elif short[-1] == middle[-1]:
-        #     print("===== 단기랑 중기랑 교차함 =====")
-        #     a = inclination(short, 20, 2)
-        #     b = inclination(short, 20, 3)
-        #     c = inclination(short, 20, 1)
-        #
-        #     if a < b < c < 0 and a < c:
-        #         # 매수 시점
-        #         print(f'===== BUY : {value[-1]} ======')
-        #         current_price.append(value[-1])
-        #         now = get_balance(upbit, 'BTC')
-        #         buy_result = buy(upbit, "KRW-BTC", now, 6000)
-        #         if buy_result == 'error_buy':
-        #             return
-        #         else:
-        #             print(buy_result)
-
-        # ===================================================================
-        # 전역 매도 시점 (비상 매도)
-        # if short[-1] == long[-1]:
-        #     if short[-2] < long[-2]:
-        #         print(f"===== SELL : {value[-1]} =====")
-        #         now = get_balance(upbit, 'BTC')
-        #         try:
-        #             sell_result = sell(upbit, "KRW-BTC", now)
-        #             print(sell_result)
-        #         except Exception as e:
-        #             print(f"===== ERROR : {e} =====")
-        #             return
-        # ===================================================================
-
-
-
+        if len(current_price) > 0:
+            if value[-1] > current_price[-1]:
+                print(f"===== SELL : {value[-1]} =====")
+                now = get_balance(upbit, ticker)
+                try:
+                    sell_result = sell(upbit, f"KRW-{ticker}", now)
+                    print(sell_result)
+                except Exception as e:
+                    print(f"===== ERROR : {e} =====")
+                    pass
+        print(f"===== 단기선 - 중기선 : {abs(short[-1] - middle[-1])} =====")
+        print(f"===== 단기선 - 장기선 : {abs(short[-1] - long[-1])} =====")
+        print(f"===== 중기선 - 장기선 : {abs(middle[-1] - long[-1])} =====")
 
         # ===================================================================
         # 1 스테이지
@@ -147,35 +88,68 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-
             # 단기선이랑 중기선이랑 만났을 때
-            if short[-1] == middle[-1]:
+            if short[-1] == middle[-1] or 100 > abs(short[-1] - middle[-1]) > 0:
                 print("===== 단기선 중기선 교차 =====")
-                if short1 < middle1:
-                    print("===== move to stage 2 .... =====")
 
-                elif short1 > middle1:
-                    print("===== still stage 1 ..... =====")
+                if short1 > middle1:
+                    print("===== still stage 1 =====")
+                elif short1 < middle1:
+                    print("===== move to stage 2 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
 
+                # --
+                elif short1 < 0 and middle1 < 0:
+                    if abs(short1) > abs(middle1):
+                        print("===== move to stage 2 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(short1) < abs(middle1):
+                        print("===== still stage 1 =====")
 
-
-            elif middle[-1] == long[-1]:
+            elif middle[-1] == long[-1] or 1 > abs(middle[-1] - long[-1]) > 0:
                 print("===== 중기선 장기선 교차 =====")
-
                 if middle1 > long1:
-                    print("===== still stage 1 .... =====")
-
+                    print("===== still stage 1 =====")
                 elif middle1 < long1:
-                    print("===== move to stage 6.... =====")
+                    print("===== move to stage 6 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif middle1 < 0 and long1 < 0:
+                    if abs(middle1) > abs(long1):
+                        print("===== move to stage 6 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(middle1) < abs(long1):
+                        print("===== still stage 1 =====")
+
+
         # ===================================================================
-
-
-
-
-
-
-
-
 
         # ===================================================================
         # 2
@@ -188,31 +162,67 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if short[-1] == middle[-1]:
+            if middle[-1] == short[-1] or 100 > abs(middle[-1] - short[-1]) > 0:
                 print("===== 단기랑 중기랑 교차함 =====")
+                if middle1 > short1:
+                    print("====== still stage 2 =====")
+                elif middle1 < short1:
+                    print("===== move to stage 1 =====")
+                    print(f'===== BUY : {value[-1]} ======')
+                    current_price.append(value[-1])
+                    now = get_balance(upbit, ticker)
+                    buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                    if buy_result == 'error_buy':
+                        return
+                    else:
+                        print(buy_result)
 
-                if short1 > middle1:
-                    print("===== move to stage 1... =====")
 
-                elif short1 < middle1:
-                    print("===== still stage 2.... =====")
+                elif middle1 < 0 and short1 < 0:
+                    if abs(middle1) > abs(short1):
+                        print("===== move to stage 1 =====")
+                        print(f'===== BUY : {value[-1]} ======')
+                        current_price.append(value[-1])
+                        now = get_balance(upbit, ticker)
+                        buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                        if buy_result == 'error_buy':
+                            return
+                        else:
+                            print(buy_result)
+                    elif abs(middle1) < abs(short1):
+                        print("===== still stage 2 =====")
 
-            if short[-1] == long[-1]:
+            elif short[-1] == long[-1] or 100 > abs(short[-1] - long[-1]) > 0:
                 print("===== 단기랑 장기랑 교차 =====")
                 if short1 > long1:
-                    print("===== still stage 2... =====")
+                    print("===== still stage 2 =====")
                 elif short1 < long1:
                     print("===== move to stage 3 =====")
-                    # 매도 신호
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif short1 < 0 and long1 < 0:
+                    if abs(short1) > abs(long1):
+                        print("===== move to stage 3 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(short1) < abs(long1):
+                        print("===== still stage 2 =====")
+
+
+
         # ===================================================================
-
-
-
-
-
-
-
-
 
         # ===================================================================
         # 3
@@ -224,26 +234,65 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if middle[-1] == long[-1]:
+            if middle[-1] == long[-1] or 100 > abs(middle[-1] - long[-1]) > 0:
                 print("===== 중기랑 장기랑 교차 =====")
-                if middle1 < long1:
+                if middle1 > long1:
+                    print("===== still stage 3 =====")
+                elif middle1 < long1:
                     print("===== move to stage 4 =====")
-                elif middle1 > long1:
-                    print("===== still stage 3... =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif middle1 < 0 and long1 < 0:
+                    if abs(middle1) > abs(long1):
+                        print("===== move to stage 4 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(middle1) < abs(long1):
+                        print("===== still stage 3 =====")
 
-            elif long[-1] == short[-1]:
+
+            elif long[-1] == short[-1] or 100 > abs(long[-1] - short[-1]) > 0:
                 print("===== 단기랑 장기랑 교차 =====")
                 if long1 > short1:
-                    print("===== still stage 3... =====")
+                    print("===== still stage 3 =====")
                 elif long1 < short1:
-                    print("===== move to stage 2... =====")
+                    print("===== move to stage 2 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif long1 < 0 and short1 < 0:
+                    if abs(long1) > abs(short1):
+                        print("===== move to stage 2 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(long1) < abs(short1):
+                        print("===== still stage 3 =====")
+
+
         # ===================================================================
-
-
-
-
-
-
 
         # ===================================================================
         # 4
@@ -255,28 +304,63 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if long[-1] == middle[-1]:
+            if long[-1] == middle[-1] or 100 > abs(long[-1] - middle[-1]) > 0:
                 print("===== 장기랑 중기랑 교차 =====")
                 if long1 > middle1:
                     print("===== still stage 4 =====")
                 elif long1 < middle1:
                     print("===== move to stage 3 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif long1 < 0 and middle1 < 0:
+                    if abs(long1) > abs(middle1):
+                        print("===== move to stage 3 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(long1) < abs(middle1):
+                        print("===== still stage 4 =====")
 
-            elif middle[-1] == short[-1]:
+            elif middle[-1] == short[-1] or 100 > abs(middle[-1] - short[-1]) > 0:
                 print("===== 중기랑 단기랑 교차 =====")
                 if middle1 > short1:
                     print("===== still stage 4 =====")
                 elif middle1 < short1:
-                    print("===== mobe to stage 5 =====")
+                    print("===== move to stage 5 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif middle1 < 0 and short1 < 0:
+                    if abs(middle1) > abs(short1):
+                        print("===== move to stage 5 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(middle1) < abs(short1):
+                        print("===== still stage 4 =====")
+
         # ===================================================================
-
-
-
-
-
-
-
-
 
         # ===================================================================
         # 5
@@ -288,27 +372,66 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if long[-1] == short[-1]:
+            if long[-1] == short[-1] or 100 > abs(long[-1] - short[-1]) > 0:
                 print("===== 장기 단기 교차 =====")
                 if long1 > short1:
-                    print("===== still stage 5... =====")
+                    print("===== still stage 5 =====")
                 elif long1 < short1:
-                    print("===== move to stage 6 =====")
-                    # 매도 신호 확인
+                    print("===== move to stage 6 ======")
+                    print(f'===== BUY : {value[-1]} ======')
+                    current_price.append(value[-1])
+                    now = get_balance(upbit, ticker)
+                    buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                    if buy_result == 'error_buy':
+                        return
+                    else:
+                        print(buy_result)
+                elif long1 < 0 and short1 < 0:
+                    if abs(long1) > abs(short1):
+                        print("===== move to stage 6 =====")
+                        print(f'===== BUY : {value[-1]} ======')
+                        current_price.append(value[-1])
+                        now = get_balance(upbit, ticker)
+                        buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                        if buy_result == 'error_buy':
+                            return
+                        else:
+                            print(buy_result)
+                    elif abs(long1) < abs(short1):
+                        print("===== still stage 5 =====")
 
 
-            elif short[-1] == middle[-1]:
+
+
+            elif short[-1] == middle[-1] or 100 > abs(short[-1] - middle[-1]) > 0:
                 print("===== 단기 중기 교차 =====")
                 if short1 > middle1:
-                    print("===== still stage 5.... =====")
+                    print("===== still stage 5 =====")
                 elif short1 < middle1:
-                    print("===== move to stage 4.... =====")
+                    print("===== move to stage 4 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif short1 < 0 and middle1 < 0:
+                    if abs(short1) > abs(middle1):
+                        print("===== move to stage 4 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(short1) < abs(middle1):
+                        print("===== still stage 5 =====")
+
         # ===================================================================
-
-
-
-
-
 
         # ===================================================================
         # 6
@@ -320,22 +443,63 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if short[-1] == long[-1]:
+            if short[-1] == long[-1] or 100 > abs(short[-1] - long[-1]) > 0:
                 print("===== 단기 장기 교차 =====")
                 if short1 > long1:
-                    print("===== still stage 6... =====")
+                    print("===== still stage 6 =====")
                 elif short1 < long1:
-                    print("===== move to stage 5... =====")
+                    print("===== move to stage 5 =====")
+                    print(f"===== SELL : {value[-1]} =====")
+                    now = get_balance(upbit, ticker)
+                    try:
+                        sell_result = sell(upbit, f"KRW-{ticker}", now)
+                        print(sell_result)
+                    except Exception as e:
+                        print(f"===== ERROR : {e} =====")
+                        pass
+                elif short1 < 0 and long1 < 0:
+                    if abs(short1) > abs(long1):
+                        print("===== move to stage 5 =====")
+                        print(f"===== SELL : {value[-1]} =====")
+                        now = get_balance(upbit, ticker)
+                        try:
+                            sell_result = sell(upbit, f"KRW-{ticker}", now)
+                            print(sell_result)
+                        except Exception as e:
+                            print(f"===== ERROR : {e} =====")
+                            pass
+                    elif abs(short1) < abs(long1):
+                        print("===== still stage 6 =====")
 
-            elif long[-1] == middle[-1]:
+
+            elif long[-1] == middle[-1] or 100 > abs(long[-1] - middle[-1]) > 0:
                 print("===== 장기 중기 교차 =====")
                 if long1 > middle1:
-                    print("===== still stage 6.. =====")
+                    print("===== still stage 6 =====")
                 elif long1 < middle1:
                     print("===== move to stage 1 =====")
+                    print(f'===== BUY : {value[-1]} ======')
+                    current_price.append(value[-1])
+                    now = get_balance(upbit, ticker)
+                    buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                    if buy_result == 'error_buy':
+                        return
+                    else:
+                        print(buy_result)
+                elif long1 < 0 and middle1 < 0:
+                    if abs(long1) > abs(middle1):
+                        print("===== move to stage 1 =====")
+                        print(f'===== BUY : {value[-1]} ======')
+                        current_price.append(value[-1])
+                        now = get_balance(upbit, ticker)
+                        buy_result = buy(upbit, f"KRW-{ticker}", now, 6000)
+                        if buy_result == 'error_buy':
+                            return
+                        else:
+                            print(buy_result)
+                    elif abs(long1) < abs(middle1):
+                        print("===== still stage 6 =====")
         # ===================================================================
-
-
 
 
 def on_connect(ws):
@@ -344,7 +508,7 @@ def on_connect(ws):
         {"ticket": "test-websocket"},
         {
             "type": "ticker",
-            "codes": ["KRW-ETH"],
+            "codes": [f"KRW-{ticker}"],
             "isOnlyRealtime": True
         },
         {"format": "DEFAULT"}
