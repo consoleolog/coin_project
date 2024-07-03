@@ -63,7 +63,7 @@ def on_message(ws, message):
     if len(value) > 120:
 
         if len(current_price) > 0:
-            if value[-1]*0.99 > current_price[-1]:
+            if value[-1]*0.9 > current_price[-1]:
                 print(f"===== SELL : {value[-1]} =====")
                 now = get_balance(upbit, ticker)
                 try:
@@ -191,7 +191,7 @@ def on_message(ws, message):
                     elif abs(middle1) < abs(short1):
                         print("===== still stage 2 =====")
 
-            elif short[-1] == long[-1] or 100 > abs(short[-1] - long[-1]) > 0:
+            elif short[-1] == long[-1] or 200 > abs(short[-1] - long[-1]) > 0:
                 print("===== 단기랑 장기랑 교차 =====")
                 if short1 > long1:
                     print("===== still stage 2 =====")
@@ -233,7 +233,7 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if middle[-1] == long[-1] or 100 > abs(middle[-1] - long[-1]) > 0:
+            if middle[-1] == long[-1] or 200 > abs(middle[-1] - long[-1]) > 0:
                 print("===== 중기랑 장기랑 교차 =====")
                 if middle1 > long1:
                     print("===== still stage 3 =====")
@@ -262,7 +262,7 @@ def on_message(ws, message):
                         print("===== still stage 3 =====")
 
 
-            elif long[-1] == short[-1] or 100 > abs(long[-1] - short[-1]) > 0:
+            elif long[-1] == short[-1] or 200 > abs(long[-1] - short[-1]) > 0:
                 print("===== 단기랑 장기랑 교차 =====")
                 if long1 > short1:
                     print("===== still stage 3 =====")
@@ -303,7 +303,7 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if long[-1] == middle[-1] or 100 > abs(long[-1] - middle[-1]) > 0:
+            if long[-1] == middle[-1] or 200 > abs(long[-1] - middle[-1]) > 0:
                 print("===== 장기랑 중기랑 교차 =====")
                 if long1 > middle1:
                     print("===== still stage 4 =====")
@@ -331,7 +331,7 @@ def on_message(ws, message):
                     elif abs(long1) < abs(middle1):
                         print("===== still stage 4 =====")
 
-            elif middle[-1] == short[-1] or 100 > abs(middle[-1] - short[-1]) > 0:
+            elif middle[-1] == short[-1] or 200 > abs(middle[-1] - short[-1]) > 0:
                 print("===== 중기랑 단기랑 교차 =====")
                 if middle1 > short1:
                     print("===== still stage 4 =====")
@@ -371,7 +371,7 @@ def on_message(ws, message):
 
             long1 = inclination(long, 120, 1)
 
-            if long[-1] == short[-1] or 100 > abs(long[-1] - short[-1]) > 0:
+            if long[-1] == short[-1] or 150 > abs(long[-1] - short[-1]) > 0:
                 print("===== 장기 단기 교차 =====")
                 if long1 > short1:
                     print("===== still stage 5 =====")
@@ -402,7 +402,7 @@ def on_message(ws, message):
 
 
 
-            elif short[-1] == middle[-1] or 100 > abs(short[-1] - middle[-1]) > 0:
+            elif short[-1] == middle[-1] or 150 > abs(short[-1] - middle[-1]) > 0:
                 print("===== 단기 중기 교차 =====")
                 if short1 > middle1:
                     print("===== still stage 5 =====")
@@ -471,7 +471,7 @@ def on_message(ws, message):
                         print("===== still stage 6 =====")
 
 
-            elif long[-1] == middle[-1] or 100 > abs(long[-1] - middle[-1]) > 0:
+            elif long[-1] == middle[-1] or 170 > abs(long[-1] - middle[-1]) > 0:
                 print("===== 장기 중기 교차 =====")
                 if long1 > middle1:
                     print("===== still stage 6 =====")
