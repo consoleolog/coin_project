@@ -63,7 +63,7 @@ def on_message(ws, message):
     if len(value) > 120:
 
         if len(current_price) > 0:
-            if value[-1] > current_price[-1]*0.99:
+            if value[-1]*0.99 > current_price[-1]:
                 print(f"===== SELL : {value[-1]} =====")
                 now = get_balance(upbit, ticker)
                 try:
