@@ -10,8 +10,8 @@ def get_balance(upbit, ticker):
     return 0
 
 
-def inclination(ma, v,length):
-    return (ma[-length] - ma[-(length+1)]) / v
+def gradient(value, rolling):
+    return (value.iloc[-2].astype(int) - value.iloc[-1].astype(int)) / rolling
 
 
 def buy(upbit, ticker, amount, price):
@@ -31,45 +31,112 @@ def sell(upbit, ticker, amount):
             return "already_sell"
     return msg
 
-def ma_stage(short,middle,long):
-    if short[-1] > middle[-1] >= long[-1] and short[-1] >= long[-1]:  # 단 중 장
+
+def ma_stage(short, middle, long):
+    if short >= middle >= long:  # 단 중 장
         return "stage1"
 
-    if middle[-1] >= short[-1] >= long[-1] and middle[-1] >= long[-1]:  # 중 단 장
+    if middle >= short >= long:  # 중 단 장
         return "stage2"
 
-    if middle[-1] >= long[-1] >= short[-1] and middle[-1] >= short[-1]:  # 중 장 단
+    if middle >= long >= short:  # 중 장 단
         return "stage3"
 
-    if long[-1] >= middle[-1] >= short[-1] and long[-1] >= short[-1]:  # 장 중 단
+    if long >= middle >= short:  # 장 중 단
         return "stage4"
 
-    if long[-1] >= short[-1] >= middle[-1] and long[-1] >= middle[-1]:  # 장 단 중
+    if long >= short >= middle:  # 장 단 중
         return "stage5"
 
-    if short[-1] >= long[-1] >= middle[-1] and short[-1] >= middle[-1]:  # 단 장 중
+    if short >= long >= middle:  # 단 장 중
         return "stage6"
 
-def stage1(value, short, middle, long):
-    print(f"===== stage1 : 안정하게 상승 중 =====")
+
+def stage1(value, short, middle, long):  # 단 중 장
+    print(f"===== stage1 : {value.iloc[-1]} 안정하게 상승 중 =====")
+
+    if short.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 단기 중기 교차   =============")
+
+    if middle.iloc[-1] == long.iloc[-1]:
+        print(f"============= 중기 장기 교차   =============")
+
+    if middle.iloc[-1] == long.iloc[-1]:
+        print(f"============= 중기 장기 교차   =============")
+
     pass
 
-def stage2(value, short, middle, long):
-    print(f"===== stage2 : 상승 추세의 끝 =====")
+
+def stage2(value, short, middle, long):  # 중 단 장
+    print(f"===== stage2 : {value.iloc[-1]} 상승 추세의 끝 =====")
+
+    if middle.iloc[-1] == short.iloc[-1]:
+        print(f"============= 중기 단기 교차  =============")
+
+    if short.iloc[-1] == long.iloc[-1]:
+        print(f"============= 단기 장기 교차  =============")
+
+    if middle.iloc[-1] == long.iloc[-1]:
+        print(f"=============  즁기 장기 교차  =============")
+
     pass
 
-def stage3(value, short, middle, long):
-    print(f"===== stage3 : 하락 추세의 시작 =====")
+
+def stage3(value, short, middle, long):  # 중 장 단
+    print(f"===== stage3 : {value.iloc[-1]} 하락 추세의 시작 =====")
+
+    if middle.iloc[-1] == long.iloc[-1]:
+        print(f"============= 중기 장기 교차   =============")
+
+    if long.iloc[-1] == short.iloc[-1]:
+        print(f"=============장기 단기 교차  =============")
+
+    if middle.iloc[-1] == short.iloc[-1]:
+        print(f"============= 중기 단기 교차  =============")
+
     pass
 
-def stage4(value, short, middle, long):
-    print(f"===== stage4 : 안정하게 하락 중 =====")
+
+def stage4(value, short, middle, long):  # 장 중 단
+    print(f"===== stage4 : {value.iloc[-1]} 안정하게 하락 중 =====")
+
+    if long.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 장기 중기 교차   =============")
+
+    if middle.iloc[-1] == short.iloc[-1]:
+        print(f"============= 중기 단기 교차  =============")
+
+    if long.iloc[-1] == short.iloc[-1]:
+        print(f"============= 장기 단기 교차   =============")
+
     pass
 
-def stage5(value, short, middle, long):
-    print(f"===== stage5 : 하락 추세의 끝 =====")
+
+def stage5(value, short, middle, long):  # 장 단 중
+    print(f"===== stage5 : {value.iloc[-1]} 하락 추세의 끝 =====")
+
+    if long.iloc[-1] == short.iloc[-1]:
+        print(f"============= 장기 단기 교차  =============")
+
+    if short.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 단기 중기 교차  =============")
+
+    if long.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 장기 중기 교차  =============")
+
     pass
 
-def stage6(value, short, middle, long):
-    print(f"===== stage6 : 상승 추세의 시작 =====")
+#desire-decide-cartel-peru-milk-1545
+def stage6(value, short, middle, long):  # 단 장 중
+    print(f"===== stage6 : {value.iloc[-1]} 상승 추세의 시작 =====")
+
+    if short.iloc[-1] == long.iloc[-1]:
+        print(f"============= 단기 장기 교차  =============")
+
+    if long.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 장기 중기 교차   =============")
+
+    if short.iloc[-1] == middle.iloc[-1]:
+        print(f"============= 단기 중기 교차   =============")
+
     pass

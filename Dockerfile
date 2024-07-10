@@ -1,17 +1,21 @@
-FROM ubuntu:latest
+FROM python:3.11
 
-RUN sudo apt install python3.10
+RUN mkdir -p /usr/src/app
 
-RUN pip install tensorflow[and-cuda]
+COPY ./requirements.txt /usr/src/app
 
-RUN python -m pip install "tensorflow[and-cuda]==2.15" --extra-index-url https://pypi.nvidia.com
+COPY ./upbit_module.py /usr/src/app
 
-RUN python -c "import tensorflow as tf
-    if tf.test.gpu_device_name():
-        print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))"
+COPY ./main.py /usr/src/app
 
+COPY ./.env /usr/src/app
 
+RUN pip install --upgrade pip
 
+RUN pip install pyupbit
 
+RUN pip install -r requirements.txt
+
+RUN python main.py
 
 

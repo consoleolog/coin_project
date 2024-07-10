@@ -1,52 +1,47 @@
+import pyupbit
+import time
+import os
 import pandas as pd
-from pandas_datareader import data
-import yfinance as yfin
-import matplotlib.pyplot as plt
-import pyupbit as upbit
+from dotenv import load_dotenv
+from upbit_module import *
 
+load_dotenv()
 
-yfin.pdr_override()
+access_key = os.environ['ACCESS_KEY']
+secret_key = os.environ['SECRET_KEY']
 
-smp500 = data.get_data_yahoo('^GSPC',start='2024-01-01',end='2024-06-28')
+ticker = "KRW-BTC"
 
-apple = data.get_data_yahoo('AAPL',start='2024-01-01',end='2024-06-28')
+current_time = time.strftime('%Y-%m-%d_%H%M', time.localtime(time.time()))
 
-smp500['rolling_5'] = smp500['Close'].rolling(5).mean()
+while True:
+    price = pyupbit.get_ohlcv(ticker, interval='day')
+    df = pyupbit.get_ohlcv(ticker, interval="minute1", count=360)
+    df['close'] = df['close'].astype(int)
+    df['ma20'] = df['close'].astype(int).rolling(20).mean()
+    df['ma60'] = df['close'].astype(int).rolling(60).mean()
+    df['ma120'] = df['close'].astype(int).rolling(120).mean()
 
-smp500['rolling_20'] = smp500['Close'].rolling(20).mean()
+    df['ema10'] = df['close'].ewm(span=9, adjust=False).mean()
 
-apple['rolling_5'] = apple['Close'].rolling(5).mean()
+    current_stage = ma_stage(df['ma20'].iloc[-1], df['ma60'].iloc[-1], df['ma120'].iloc[-1])
 
-apple['rolling_20'] = apple['Close'].rolling(20).mean()
+    if current_stage == 'stage1':
+        stage1(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
-plt.plot(smp500.index,smp500['Close'],color='crimson')
-plt.xlabel('time')
-plt.ylabel('price')
-plt.legend(['smp500'])
-plt.plot(apple.index,apple['Close'],color='skyblue')
-plt.savefig('smp500.png')
-plt.show()
+    if current_stage == 'stage2':
+        stage2(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
+    if current_stage == 'stage3':
+        stage3(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
-def get_company_data(company_name,start,end):
-    return data.get_data_yahoo(company_name,start=start,end=end)
+    if current_stage == 'stage4':
+        stage4(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
+    if current_stage == 'stage5':
+        stage5(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
+    if current_stage == 'stage6':
+        stage6(df['close'], df['ma20'], df['ma60'], df['ma120'])
 
-def income(date,company_name):
-    before_data = get_company_data(company_name,date-1,date)
-    after_data = get_company_data(company_name,date,date+1)
-
-    before_price = before_data['Close']
-    after_price = after_data['Close']
-
-    return (after_price - before_price)/before_price
-
-
-
-
-
-
-# if __name__ == '__main__':
-
-
+    time.sleep(60)
