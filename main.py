@@ -12,7 +12,7 @@ secret_key = os.environ['SECRET_KEY']
 
 ticker = "KRW-BTC"
 
-current_time = time.strftime('%Y-%m-%d_%H%M', time.localtime(time.time()))
+current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
 while True:
     price = pyupbit.get_ohlcv(ticker, interval='day')
