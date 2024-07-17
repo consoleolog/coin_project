@@ -1,4 +1,8 @@
 import logging
+import os
+
+fmt = "[%(levelname)s] %(asctime)s : %(filename)s : %(lineno)d - %(message)s"
+datefmt = '%Y-%m-%d %H:%M:%S'
 
 
 class CustomFormatter(logging.Formatter):
@@ -22,22 +26,21 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt, datefmt='%Y-%m-%d %H:%M:%S')
+        formatter = logging.Formatter(log_fmt, datefmt=datefmt)
         return formatter.format(record)
 
 
 def set_loglevel(level, log_file='app.log'):
     try:
-        formatter = logging.Formatter(
-            "[%(levelname)s] %(asctime)s : %(filename)s : %(lineno)d - %(message)s",
-            datefmt='%Y-%m-%d %H:%M:%S'
-        )
+        if not os.path.exists(f"{os.getcwd()}/.logs"):
+            os.mkdir(f"{os.getcwd()}/.logs")
+
+        formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
 
         stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(
-            CustomFormatter("[%(levelname)s] %(asctime)s : %(filename)s : %(lineno)d - %(message)s"))
+        stream_handler.setFormatter(CustomFormatter(fmt))
 
-        file_handler = logging.FileHandler(f"./.logs/{log_file}")
+        file_handler = logging.FileHandler(f"{os.getcwd()}/.logs/{log_file}")
         file_handler.setFormatter(formatter)
 
         logger = logging.getLogger()
