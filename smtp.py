@@ -8,7 +8,26 @@ import config
 
 a = {
     'subject': "이것은 메일 제목 입니다",
-    'html': '<button>버튼</button>',
+    'html': """
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 18.181818181818183%">일시</th>
+                <th style="width: 18.181818181818183%">종목</th>
+                <th style="width: 9.090909090909092%">매도/매매</th>
+                <th style="width: 27.27272727272727%">가격</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center">2023</td>
+                <td>btc</td>
+                <td style="text-align:center">매매</td>
+                <td>1800</td>
+            </tr>
+        </tbody>
+    </table>
+    """,
     'filepath': ['./data/btc.csv', './data/eth.csv'],
     'filename': ['btc.csv', 'eth.csv']
 }
@@ -40,3 +59,4 @@ def send_email(inputs):
     s.close()
 
 
+send_email(a)
