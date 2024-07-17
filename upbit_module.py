@@ -42,19 +42,19 @@ def ma_stage(short, middle, long):
     if short >= middle >= long:  # 단 중 장
         return "stage1"
 
-    if middle >= short >= long:  # 중 단 장
+    elif middle >= short >= long:  # 중 단 장
         return "stage2"
 
-    if middle >= long >= short:  # 중 장 단
+    elif middle >= long >= short:  # 중 장 단
         return "stage3"
 
-    if long >= middle >= short:  # 장  중 단
+    elif long >= middle >= short:  # 장  중 단
         return "stage4"
 
-    if long >= short >= middle:  # 장 단 중
+    elif long >= short >= middle:  # 장 단 중
         return "stage5"
 
-    if short >= long >= middle:  # 단 장 중
+    elif short >= long >= middle:  # 단 장 중
         return "stage6"
 
 
